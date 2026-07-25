@@ -60,10 +60,9 @@
 
     mainScreen.classList.add('main-screen', 'start-screen');
 
-    replaceText(mainTitle, 'Main', 'Start');
-    replaceText(mainTitle, 'Start here', 'Start');
+    mainTitle.textContent = 'Start';
     const subtitle = mainScreen.querySelector('.screen-title p');
-    if (subtitle) subtitle.textContent = 'One useful action. Nothing else is required.';
+    if (subtitle) subtitle.textContent = 'Pick one useful thing.';
 
     const taskCard = mainScreen.querySelector('.task-card');
     if (taskCard && !taskCard.dataset.focusEnhanced) {
@@ -73,7 +72,7 @@
       if (heading) {
         const now = document.createElement('p');
         now.className = 'now-label';
-        now.textContent = 'Do this now';
+        now.textContent = 'Next task';
         heading.parentNode.insertBefore(now, heading);
       }
     }
@@ -89,14 +88,12 @@
 
       if (title === 'Take dishes to the kitchen') {
         if (primary) primary.textContent = 'Take one load';
-        if (secondary) secondary.textContent = 'Remove all dishes';
-        if (note) note.textContent = 'One load is a complete small version.';
+        if (secondary) secondary.textContent = 'Remove every dish';
+        if (note) note.textContent = 'One load counts.';
       } else {
-        replaceText(primary, 'Minimum', 'Do the small version');
-        replaceText(primary, 'Small version', 'Do the small version');
-        replaceText(secondary, 'Full', 'Do the full task');
-        replaceText(secondary, 'Full task', 'Do the full task');
-        if (note) note.textContent = 'The small version still counts as complete.';
+        if (primary) primary.textContent = 'Do the small version';
+        if (secondary) secondary.textContent = 'Do the full task';
+        if (note) note.textContent = 'The small version counts.';
       }
     }
 
@@ -106,14 +103,18 @@
       const strong = stateStrip.querySelector('.state-copy strong');
       const detail = stateStrip.querySelector('.state-copy span');
       const button = stateStrip.querySelector('button');
-      if (strong?.textContent.trim() === 'Recovery mode' || strong?.textContent.trim() === 'Room reset') {
-        strong.textContent = 'Room reset is active';
-        if (detail) detail.textContent = 'The reset plan stays available, but you only need the task shown.';
-        if (button) button.textContent = 'Open plan';
-      } else if (strong?.textContent.trim() === 'Maintenance mode' || strong?.textContent.trim() === 'Keep it usable') {
-        strong.textContent = 'Keep the room usable';
-        if (detail) detail.textContent = 'Choose what needs attention now. Missed days do not build up.';
-        if (button) button.textContent = 'Check room';
+
+      if (strong?.textContent.trim().includes('Recovery') || strong?.textContent.trim().includes('Room reset')) {
+        strong.textContent = 'Room reset';
+        if (detail) detail.textContent = 'The ordered plan is ready when you need it.';
+        if (button) button.textContent = 'Plan';
+      } else if (strong?.textContent.trim().includes('Maintenance') || strong?.textContent.trim().includes('Keep the room')) {
+        strong.textContent = 'Keep it usable';
+        if (detail) detail.textContent = 'Choose what needs attention now. Nothing missed builds up.';
+        if (button) button.textContent = 'Check';
+      } else if (strong?.textContent.trim().includes('Active')) {
+        strong.textContent = 'Task saved';
+        if (detail) detail.textContent = 'Continue from the exact step you left.';
       }
     }
 
@@ -124,14 +125,70 @@
       const recoveryActive = Boolean(stateStrip?.classList.contains('recovery'));
       quickGrid.innerHTML = `
         <div class="choice-heading">
-          <p class="eyebrow">Choose instead</p>
-          <h3>What would help?</h3>
+          <p class="eyebrow">Other ways to start</p>
         </div>
-        ${makeQuickAction('run-scan', '◎', 'Choose what needs attention', 'Dishes, rubbish, clothes, bed, route or floor')}
-        ${makeQuickAction(recoveryActive ? 'show-recovery' : 'run-scan', '↻', recoveryActive ? 'Open the room-reset plan' : 'Run a quick room check', recoveryActive ? 'See the ordered reset tasks' : 'Find the current useful task')}
-        ${makeQuickAction('choose-task', '☷', 'Browse or add tasks', 'Search, add a permanent task or add a one-off task')}
-        ${makeQuickAction('open-index', '?', 'I am lost', 'Find any page, action or ChatGPT prompt')}`;
+        ${makeQuickAction('run-scan', '◎', 'What needs attention?', 'Dishes, rubbish, clothes, bed, route or floor')}
+        ${makeQuickAction(recoveryActive ? 'show-recovery' : 'run-scan', '↻', recoveryActive ? 'Room-reset plan' : 'Quick room check', recoveryActive ? 'Open the ordered reset tasks' : 'Find the current useful task')}
+        ${makeQuickAction('choose-task', '☷', 'Tasks & categories', 'Browse, add or edit')}`;
     }
+  }
+
+  function enhanceActiveTask() {
+    const activeTitle = document.getElementById('active-title');
+    const activeScreen = activeTitle?.closest('.screen');
+    if (!activeScreen) return;
+
+    activeScreen.classList.add('active-screen');
+    activeTitle.textContent = 'One step';
+
+    const subtitle = activeScreen.querySelector('.screen-title p');
+    if (subtitle) {
+      subtitle.textContent = subtitle.textContent.includes('Minimum') ? 'Small version' : 'Full task';
+    }
+
+    const stateStrong = activeScreen.querySelector('.state-strip .state-copy strong');
+    const stateDetail = activeScreen.querySelector('.state-strip .state-copy span');
+    if (stateStrong) stateStrong.textContent = 'Current task';
+    if (stateDetail) stateDetail.textContent = stateDetail.textContent.trim();
+
+    const status = activeScreen.querySelector('.state-strip .status-pill');
+    if (status) status.textContent = status.textContent.replace(/^Step\s+/i, '').replace(/\s+of\s+/i, ' / ');
+
+    const stepCount = activeScreen.querySelector('.step-count');
+    if (stepCount) stepCount.textContent = 'Do this';
+
+    const done = activeScreen.querySelector('[data-action="complete-step"]');
+    if (done) done.textContent = 'Done';
+
+    const yes = activeScreen.querySelector('[data-action="loop-yes"]');
+    const no = activeScreen.querySelector('[data-action="loop-no"]');
+    if (yes) yes.textContent = 'Yes — finish';
+    if (no) no.textContent = 'No — another load';
+
+    const controls = activeScreen.querySelectorAll('.session-controls button');
+    controls.forEach(button => {
+      if (button.dataset.action === 'pause-session') button.textContent = 'Back';
+      if (button.dataset.action === 'stop-session') button.textContent = 'Stop & save';
+      if (button.dataset.action === 'task-advice') button.textContent = 'Help';
+    });
+  }
+
+  function enhanceTasks() {
+    const tasksTitle = document.getElementById('tasks-title');
+    if (!tasksTitle) return;
+    tasksTitle.textContent = 'Tasks & categories';
+    const screen = tasksTitle.closest('.screen');
+    const subtitle = screen?.querySelector('.screen-title p');
+    if (subtitle) subtitle.textContent = 'Find, add or change a task.';
+
+    screen?.querySelectorAll('.chip').forEach(chip => {
+      replaceText(chip, 'Recovery', 'Room reset');
+      replaceText(chip, 'Maintenance', 'Keep usable');
+    });
+
+    screen?.querySelectorAll('.list-card.task-card .task-first-step strong').forEach(label => {
+      replaceText(label, 'First action', 'Start with');
+    });
   }
 
   function enhanceNavigation() {
@@ -141,18 +198,13 @@
     });
   }
 
-  function enhanceTaskLists() {
-    document.querySelectorAll('.list-card.task-card .task-first-step strong').forEach(label => {
-      replaceText(label, 'First action', 'Start with');
-    });
-  }
-
   function applyEnhancements() {
     ensureLayoutSwitch();
     applyLayout();
     enhanceNavigation();
     enhanceMain();
-    enhanceTaskLists();
+    enhanceActiveTask();
+    enhanceTasks();
   }
 
   let scheduled = false;
