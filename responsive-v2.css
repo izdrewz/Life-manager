@@ -1,39 +1,143 @@
-/* Responsive layout v2
-   Phone = focused one-column task flow.
-   Laptop = compact sidebar plus a two-column start screen.
+/* Responsive layout v3
+   Focus mode: one action in a calm single column.
+   Plan mode: laptop sidebar plus task workspace and supporting choices.
 */
 
+.layout-switch {
+  display: none;
+  padding: 3px;
+  border: 1px solid rgba(84, 35, 61, 0.14);
+  border-radius: 999px;
+  background: rgba(255, 250, 245, 0.72);
+  box-shadow: 0 5px 16px rgba(84, 35, 61, 0.06);
+}
+
+.layout-switch button {
+  min-height: 36px;
+  padding: 6px 12px;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--muted);
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.layout-switch button.active {
+  background: var(--plum);
+  color: var(--paper);
+}
+
+.start-screen {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.start-screen > .screen-title { order: 1; }
+.start-screen > .focus-card { order: 2; }
+.start-screen > .room-status-card { order: 3; }
+.start-screen > .choice-panel { order: 4; }
+
+.now-label {
+  margin: 0 0 5px;
+  color: var(--muted);
+  font-size: 0.72rem;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.choice-panel {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 9px;
+  padding: 12px;
+  border: 1px solid rgba(84, 35, 61, 0.12);
+  border-radius: 23px;
+  background: rgba(255, 250, 245, 0.55);
+}
+
+.choice-heading {
+  grid-column: 1 / -1;
+  padding: 2px 2px 4px;
+}
+
+.choice-heading .eyebrow {
+  margin-bottom: 2px;
+}
+
+.choice-heading h3 {
+  font-size: 1.12rem;
+}
+
+.choice-panel .quick-action {
+  min-height: 90px;
+  background: rgba(255, 250, 245, 0.9);
+}
+
+.focus-card .button-row {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+@media (max-width: 480px) {
+  .screen-title h2 {
+    font-size: 1.5rem;
+  }
+
+  .choice-panel {
+    grid-template-columns: 1fr;
+  }
+
+  .choice-panel .quick-action {
+    min-height: 68px;
+  }
+
+  .room-status-card .state-copy span {
+    max-width: 30ch;
+  }
+}
+
 @media (min-width: 860px) {
+  .layout-switch {
+    display: inline-flex;
+    margin-left: auto;
+  }
+
   body {
     background:
-      radial-gradient(circle at 9% 8%, rgba(205, 180, 192, 0.30), transparent 30rem),
+      radial-gradient(circle at 9% 8%, rgba(205, 180, 192, 0.28), transparent 30rem),
       linear-gradient(135deg, #f0ddd7 0%, #eee5dc 48%, #e7ded3 100%);
   }
 
-  .app-shell {
-    width: min(1180px, 100%);
+  /* Laptop plan mode */
+  body.layout-plan .app-shell {
+    width: min(1220px, 100%);
     min-height: 100vh;
     display: grid;
-    grid-template-columns: 190px minmax(0, 1fr);
+    grid-template-columns: 210px minmax(0, 1fr);
     grid-template-rows: auto 1fr;
     grid-template-areas:
       "top top"
       "nav main";
-    gap: 20px 24px;
-    padding: 22px 28px 36px;
+    gap: 20px 26px;
+    padding: 22px 30px 38px;
   }
 
-  .topbar {
+  body.layout-plan .topbar {
     grid-area: top;
-    padding: 4px 2px 8px;
+    display: grid;
+    grid-template-columns: 1fr auto auto;
+    align-items: center;
+    padding: 2px 1px 8px;
   }
 
-  #viewRoot {
+  body.layout-plan #viewRoot {
     grid-area: main;
     min-width: 0;
   }
 
-  .bottom-nav {
+  body.layout-plan .bottom-nav {
     grid-area: nav;
     position: sticky;
     top: 22px;
@@ -45,157 +149,122 @@
     display: flex;
     flex-direction: column;
     align-self: start;
-    gap: 7px;
+    gap: 6px;
     padding: 10px;
-    background: rgba(255, 250, 245, 0.88);
-    border: 1px solid rgba(84, 35, 61, 0.14);
+    background: rgba(255, 250, 245, 0.9);
+    border: 1px solid rgba(84, 35, 61, 0.13);
     border-radius: 22px;
-    box-shadow: 0 12px 32px rgba(44, 32, 38, 0.12);
+    box-shadow: 0 12px 32px rgba(44, 32, 38, 0.11);
     backdrop-filter: blur(16px);
   }
 
-  .nav-item {
-    min-height: 50px;
+  body.layout-plan .nav-item {
+    min-height: 52px;
     width: 100%;
     display: grid;
-    grid-template-columns: 34px 1fr;
+    grid-template-columns: 36px 1fr;
     justify-items: start;
     align-items: center;
     gap: 9px;
     padding: 9px 11px;
     text-align: left;
-    font-size: 0.82rem;
+    font-size: 0.84rem;
   }
 
-  .nav-item > span:first-child {
-    width: 32px;
-    height: 32px;
+  body.layout-plan .nav-item > span:first-child {
+    width: 34px;
+    height: 34px;
     display: grid;
     place-items: center;
-    border-radius: 10px;
-    background: rgba(255, 255, 255, 0.55);
+    border-radius: 11px;
+    background: rgba(255, 255, 255, 0.58);
   }
 
-  .nav-item.active {
-    background: var(--mauve-tint);
-  }
-
-  .screen.main-screen {
+  body.layout-plan .start-screen {
     display: grid;
-    grid-template-columns: minmax(0, 1.45fr) minmax(260px, 0.75fr);
+    grid-template-columns: minmax(480px, 1.45fr) minmax(290px, 0.78fr);
     grid-template-areas:
       "title title"
-      "task state"
-      "task quick";
+      "task status"
+      "task choices";
     align-items: start;
-    gap: 16px;
+    gap: 15px 18px;
   }
 
-  .main-screen > .screen-title {
+  body.layout-plan .start-screen > .screen-title {
     grid-area: title;
   }
 
-  .main-screen > .task-card {
+  body.layout-plan .start-screen > .focus-card {
     grid-area: task;
+    min-height: 440px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 32px 30px 28px;
   }
 
-  .main-screen > .state-strip {
-    grid-area: state;
+  body.layout-plan .start-screen > .room-status-card {
+    grid-area: status;
   }
 
-  .main-screen > .quick-grid {
-    grid-area: quick;
+  body.layout-plan .start-screen > .choice-panel {
+    grid-area: choices;
     grid-template-columns: 1fr;
   }
 
-  #viewRoot > .screen:not(.main-screen) {
-    width: min(100%, 860px);
+  body.layout-plan .choice-panel .quick-action {
+    min-height: 70px;
+  }
+
+  body.layout-plan #viewRoot > .screen:not(.start-screen) {
+    width: min(100%, 930px);
     margin-inline: auto;
   }
 
-  .task-list,
-  .advice-list {
+  body.layout-plan .task-list,
+  body.layout-plan .advice-list {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
-  .more-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .sheet-dialog,
-  .index-dialog {
-    width: min(760px, calc(100% - 48px));
+  body.layout-plan .sheet-dialog,
+  body.layout-plan .index-dialog {
     margin: auto;
+    width: min(calc(100% - 48px), 760px);
   }
 
-  .sheet-card,
-  .index-panel {
+  body.layout-plan .sheet-card,
+  body.layout-plan .index-panel {
     border-radius: 28px;
-    max-height: min(86vh, 820px);
-  }
-}
-
-@media (max-width: 859px) {
-  .app-shell {
-    width: min(100%, 560px);
+    max-height: 84vh;
   }
 
-  .screen.main-screen {
+  /* Laptop focus mode: centred and distraction-light. */
+  body.layout-focus .app-shell {
+    width: min(680px, 100%);
+    display: block;
+    padding: 20px 24px calc(104px + env(safe-area-inset-bottom));
+  }
+
+  body.layout-focus .topbar {
     display: grid;
-    gap: 12px;
+    grid-template-columns: 1fr auto auto;
+    align-items: center;
   }
 
-  .screen.main-screen > .screen-title {
-    order: 1;
-  }
-
-  .screen.main-screen > .task-card {
-    order: 2;
-  }
-
-  .screen.main-screen > .state-strip {
+  body.layout-focus .start-screen > .room-status-card {
     order: 3;
   }
 
-  .screen.main-screen > .quick-grid {
+  body.layout-focus .start-screen > .choice-panel {
     order: 4;
   }
-}
 
-@media (max-width: 520px) {
-  .topbar .eyebrow {
-    display: none;
-  }
-
-  .topbar {
-    padding-top: 4px;
-  }
-
-  .screen-title {
-    padding-top: 0;
-  }
-
-  .screen-title p {
-    display: none;
-  }
-
-  .state-copy span {
-    display: none;
-  }
-
-  .state-strip {
-    padding-block: 8px;
-  }
-
-  .task-card {
-    padding: 19px 16px 16px;
-  }
-
-  .task-first-step {
-    font-size: 0.95rem;
-  }
-
-  .quick-grid {
-    grid-template-columns: 1fr;
+  body.layout-focus .bottom-nav {
+    position: fixed;
+    left: 50%;
+    bottom: 12px;
+    transform: translateX(-50%);
+    width: min(calc(100% - 28px), 650px);
   }
 }
