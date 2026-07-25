@@ -1,0 +1,201 @@
+/* Responsive layout v2
+   Phone = focused one-column task flow.
+   Laptop = compact sidebar plus a two-column start screen.
+*/
+
+@media (min-width: 860px) {
+  body {
+    background:
+      radial-gradient(circle at 9% 8%, rgba(205, 180, 192, 0.30), transparent 30rem),
+      linear-gradient(135deg, #f0ddd7 0%, #eee5dc 48%, #e7ded3 100%);
+  }
+
+  .app-shell {
+    width: min(1180px, 100%);
+    min-height: 100vh;
+    display: grid;
+    grid-template-columns: 190px minmax(0, 1fr);
+    grid-template-rows: auto 1fr;
+    grid-template-areas:
+      "top top"
+      "nav main";
+    gap: 20px 24px;
+    padding: 22px 28px 36px;
+  }
+
+  .topbar {
+    grid-area: top;
+    padding: 4px 2px 8px;
+  }
+
+  #viewRoot {
+    grid-area: main;
+    min-width: 0;
+  }
+
+  .bottom-nav {
+    grid-area: nav;
+    position: sticky;
+    top: 22px;
+    left: auto;
+    bottom: auto;
+    transform: none;
+    z-index: 5;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-self: start;
+    gap: 7px;
+    padding: 10px;
+    background: rgba(255, 250, 245, 0.88);
+    border: 1px solid rgba(84, 35, 61, 0.14);
+    border-radius: 22px;
+    box-shadow: 0 12px 32px rgba(44, 32, 38, 0.12);
+    backdrop-filter: blur(16px);
+  }
+
+  .nav-item {
+    min-height: 50px;
+    width: 100%;
+    display: grid;
+    grid-template-columns: 34px 1fr;
+    justify-items: start;
+    align-items: center;
+    gap: 9px;
+    padding: 9px 11px;
+    text-align: left;
+    font-size: 0.82rem;
+  }
+
+  .nav-item > span:first-child {
+    width: 32px;
+    height: 32px;
+    display: grid;
+    place-items: center;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.55);
+  }
+
+  .nav-item.active {
+    background: var(--mauve-tint);
+  }
+
+  .screen.main-screen {
+    display: grid;
+    grid-template-columns: minmax(0, 1.45fr) minmax(260px, 0.75fr);
+    grid-template-areas:
+      "title title"
+      "task state"
+      "task quick";
+    align-items: start;
+    gap: 16px;
+  }
+
+  .main-screen > .screen-title {
+    grid-area: title;
+  }
+
+  .main-screen > .task-card {
+    grid-area: task;
+  }
+
+  .main-screen > .state-strip {
+    grid-area: state;
+  }
+
+  .main-screen > .quick-grid {
+    grid-area: quick;
+    grid-template-columns: 1fr;
+  }
+
+  #viewRoot > .screen:not(.main-screen) {
+    width: min(100%, 860px);
+    margin-inline: auto;
+  }
+
+  .task-list,
+  .advice-list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .more-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .sheet-dialog,
+  .index-dialog {
+    width: min(760px, calc(100% - 48px));
+    margin: auto;
+  }
+
+  .sheet-card,
+  .index-panel {
+    border-radius: 28px;
+    max-height: min(86vh, 820px);
+  }
+}
+
+@media (max-width: 859px) {
+  .app-shell {
+    width: min(100%, 560px);
+  }
+
+  .screen.main-screen {
+    display: grid;
+    gap: 12px;
+  }
+
+  .screen.main-screen > .screen-title {
+    order: 1;
+  }
+
+  .screen.main-screen > .task-card {
+    order: 2;
+  }
+
+  .screen.main-screen > .state-strip {
+    order: 3;
+  }
+
+  .screen.main-screen > .quick-grid {
+    order: 4;
+  }
+}
+
+@media (max-width: 520px) {
+  .topbar .eyebrow {
+    display: none;
+  }
+
+  .topbar {
+    padding-top: 4px;
+  }
+
+  .screen-title {
+    padding-top: 0;
+  }
+
+  .screen-title p {
+    display: none;
+  }
+
+  .state-copy span {
+    display: none;
+  }
+
+  .state-strip {
+    padding-block: 8px;
+  }
+
+  .task-card {
+    padding: 19px 16px 16px;
+  }
+
+  .task-first-step {
+    font-size: 0.95rem;
+  }
+
+  .quick-grid {
+    grid-template-columns: 1fr;
+  }
+}
