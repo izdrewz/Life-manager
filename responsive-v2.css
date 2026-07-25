@@ -1,6 +1,6 @@
-/* Responsive layout v3
-   Focus mode: one action in a calm single column.
-   Plan mode: laptop sidebar plus task workspace and supporting choices.
+/* Hybrid responsive layout
+   Phone = one-action focus flow.
+   Laptop = compact planning workspace with an optional Focus mode.
 */
 
 .layout-switch {
@@ -8,13 +8,13 @@
   padding: 3px;
   border: 1px solid rgba(84, 35, 61, 0.14);
   border-radius: 999px;
-  background: rgba(255, 250, 245, 0.72);
-  box-shadow: 0 5px 16px rgba(84, 35, 61, 0.06);
+  background: rgba(255, 250, 245, 0.74);
+  box-shadow: 0 4px 14px rgba(84, 35, 61, 0.06);
 }
 
 .layout-switch button {
   min-height: 36px;
-  padding: 6px 12px;
+  padding: 6px 13px;
   border: 0;
   border-radius: 999px;
   background: transparent;
@@ -28,73 +28,107 @@
   color: var(--paper);
 }
 
-.start-screen {
+.start-screen,
+.active-screen {
   display: flex;
   flex-direction: column;
   gap: 12px;
 }
 
+/* Phone order: action first, alternatives second, room status last. */
 .start-screen > .screen-title { order: 1; }
 .start-screen > .focus-card { order: 2; }
-.start-screen > .room-status-card { order: 3; }
-.start-screen > .choice-panel { order: 4; }
+.start-screen > .choice-panel { order: 3; }
+.start-screen > .room-status-card { order: 4; }
 
 .now-label {
   margin: 0 0 5px;
   color: var(--muted);
-  font-size: 0.72rem;
+  font-size: 0.69rem;
   font-weight: 900;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.11em;
   text-transform: uppercase;
 }
 
 .choice-panel {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 9px;
-  padding: 12px;
-  border: 1px solid rgba(84, 35, 61, 0.12);
-  border-radius: 23px;
-  background: rgba(255, 250, 245, 0.55);
+  grid-template-columns: 1fr;
+  gap: 8px;
+  padding: 11px;
+  border: 1px solid rgba(84, 35, 61, 0.11);
+  border-radius: 22px;
+  background: rgba(255, 250, 245, 0.50);
 }
 
 .choice-heading {
-  grid-column: 1 / -1;
-  padding: 2px 2px 4px;
+  padding: 1px 3px 3px;
 }
 
 .choice-heading .eyebrow {
-  margin-bottom: 2px;
-}
-
-.choice-heading h3 {
-  font-size: 1.12rem;
+  margin: 0;
+  font-size: 0.68rem;
 }
 
 .choice-panel .quick-action {
-  min-height: 90px;
-  background: rgba(255, 250, 245, 0.9);
+  min-height: 66px;
+  background: rgba(255, 250, 245, 0.91);
 }
 
 .focus-card .button-row {
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
+.room-status-card {
+  opacity: 0.88;
+}
+
+.active-screen .state-strip {
+  order: 2;
+}
+
+.active-screen .active-step {
+  order: 3;
+}
+
+.active-screen .session-controls {
+  order: 4;
+}
+
+.active-screen .screen-title {
+  order: 1;
+}
+
+.active-screen .active-step {
+  min-height: min(58vh, 520px);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.active-screen .active-step .primary-button {
+  margin-top: 20px;
+}
+
 @media (max-width: 480px) {
   .screen-title h2 {
-    font-size: 1.5rem;
+    font-size: 1.48rem;
   }
 
-  .choice-panel {
+  .topbar .eyebrow {
+    display: none;
+  }
+
+  .focus-card .button-row {
     grid-template-columns: 1fr;
   }
 
-  .choice-panel .quick-action {
-    min-height: 68px;
+  .focus-card .primary-button,
+  .focus-card .secondary-button {
+    min-height: 52px;
   }
 
   .room-status-card .state-copy span {
-    max-width: 30ch;
+    max-width: 28ch;
   }
 }
 
@@ -106,22 +140,22 @@
 
   body {
     background:
-      radial-gradient(circle at 9% 8%, rgba(205, 180, 192, 0.28), transparent 30rem),
+      radial-gradient(circle at 8% 6%, rgba(205, 180, 192, 0.24), transparent 28rem),
       linear-gradient(135deg, #f0ddd7 0%, #eee5dc 48%, #e7ded3 100%);
   }
 
-  /* Laptop plan mode */
+  /* Laptop Plan mode */
   body.layout-plan .app-shell {
-    width: min(1220px, 100%);
+    width: min(1240px, 100%);
     min-height: 100vh;
     display: grid;
-    grid-template-columns: 210px minmax(0, 1fr);
+    grid-template-columns: 204px minmax(0, 1fr);
     grid-template-rows: auto 1fr;
     grid-template-areas:
       "top top"
       "nav main";
-    gap: 20px 26px;
-    padding: 22px 30px 38px;
+    gap: 18px 26px;
+    padding: 20px 30px 38px;
   }
 
   body.layout-plan .topbar {
@@ -129,7 +163,7 @@
     display: grid;
     grid-template-columns: 1fr auto auto;
     align-items: center;
-    padding: 2px 1px 8px;
+    padding: 1px 2px 8px;
   }
 
   body.layout-plan #viewRoot {
@@ -140,7 +174,7 @@
   body.layout-plan .bottom-nav {
     grid-area: nav;
     position: sticky;
-    top: 22px;
+    top: 20px;
     left: auto;
     bottom: auto;
     transform: none;
@@ -151,10 +185,10 @@
     align-self: start;
     gap: 6px;
     padding: 10px;
-    background: rgba(255, 250, 245, 0.9);
+    background: rgba(255, 250, 245, 0.91);
     border: 1px solid rgba(84, 35, 61, 0.13);
     border-radius: 22px;
-    box-shadow: 0 12px 32px rgba(44, 32, 38, 0.11);
+    box-shadow: 0 12px 30px rgba(44, 32, 38, 0.10);
     backdrop-filter: blur(16px);
   }
 
@@ -182,11 +216,11 @@
 
   body.layout-plan .start-screen {
     display: grid;
-    grid-template-columns: minmax(480px, 1.45fr) minmax(290px, 0.78fr);
+    grid-template-columns: minmax(500px, 1.5fr) minmax(300px, 0.76fr);
     grid-template-areas:
       "title title"
-      "task status"
-      "task choices";
+      "task choices"
+      "task status";
     align-items: start;
     gap: 15px 18px;
   }
@@ -197,28 +231,36 @@
 
   body.layout-plan .start-screen > .focus-card {
     grid-area: task;
-    min-height: 440px;
+    min-height: 460px;
     display: flex;
     flex-direction: column;
     justify-content: center;
-    padding: 32px 30px 28px;
+    padding: 34px 32px 30px;
+  }
+
+  body.layout-plan .start-screen > .choice-panel {
+    grid-area: choices;
   }
 
   body.layout-plan .start-screen > .room-status-card {
     grid-area: status;
   }
 
-  body.layout-plan .start-screen > .choice-panel {
-    grid-area: choices;
-    grid-template-columns: 1fr;
-  }
-
   body.layout-plan .choice-panel .quick-action {
-    min-height: 70px;
+    min-height: 72px;
   }
 
-  body.layout-plan #viewRoot > .screen:not(.start-screen) {
-    width: min(100%, 930px);
+  body.layout-plan .active-screen {
+    width: min(100%, 900px);
+    margin-inline: auto;
+  }
+
+  body.layout-plan .active-screen .active-step {
+    min-height: 500px;
+  }
+
+  body.layout-plan #viewRoot > .screen:not(.start-screen):not(.active-screen) {
+    width: min(100%, 960px);
     margin-inline: auto;
   }
 
@@ -230,7 +272,7 @@
   body.layout-plan .sheet-dialog,
   body.layout-plan .index-dialog {
     margin: auto;
-    width: min(calc(100% - 48px), 760px);
+    width: min(calc(100% - 48px), 780px);
   }
 
   body.layout-plan .sheet-card,
@@ -239,11 +281,11 @@
     max-height: 84vh;
   }
 
-  /* Laptop focus mode: centred and distraction-light. */
+  /* Laptop Focus mode */
   body.layout-focus .app-shell {
-    width: min(680px, 100%);
+    width: min(720px, 100%);
     display: block;
-    padding: 20px 24px calc(104px + env(safe-area-inset-bottom));
+    padding: 18px 24px calc(104px + env(safe-area-inset-bottom));
   }
 
   body.layout-focus .topbar {
@@ -252,19 +294,18 @@
     align-items: center;
   }
 
+  body.layout-focus .start-screen > .focus-card {
+    min-height: 420px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 30px 28px;
+  }
+
+  body.layout-focus .start-screen > .choice-panel,
   body.layout-focus .start-screen > .room-status-card {
-    order: 3;
-  }
-
-  body.layout-focus .start-screen > .choice-panel {
-    order: 4;
-  }
-
-  body.layout-focus .bottom-nav {
-    position: fixed;
-    left: 50%;
-    bottom: 12px;
-    transform: translateX(-50%);
-    width: min(calc(100% - 28px), 650px);
+    max-width: 620px;
+    width: 100%;
+    margin-inline: auto;
   }
 }
