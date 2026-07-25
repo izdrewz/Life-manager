@@ -1,0 +1,486 @@
+/* Visual refresh based on Izzy's comparison with polished cleaning apps.
+   Keeps the existing functions and category system while replacing the
+   heavy dashboard treatment with a calmer, more mobile-native layout. */
+
+:root {
+  --page: #f0ddd7;
+  --paper: #fffaf5;
+  --ink: #2c2026;
+  --muted: #74636b;
+  --plum: #54233d;
+  --line-soft: rgba(84, 35, 61, 0.18);
+  --surface-shadow: 0 10px 28px rgba(84, 35, 61, 0.10);
+  --surface-shadow-small: 0 5px 16px rgba(84, 35, 61, 0.08);
+  --radius: 22px;
+}
+
+html {
+  background: var(--page);
+}
+
+body {
+  background:
+    radial-gradient(circle at 12% 0%, rgba(205, 180, 192, 0.38), transparent 28rem),
+    linear-gradient(180deg, #f3dfda 0%, #eee2d7 100%);
+}
+
+body.decorated {
+  background:
+    radial-gradient(circle at 12% 0%, rgba(205, 180, 192, 0.44), transparent 28rem),
+    linear-gradient(180deg, #f3dfda 0%, #eee2d7 100%);
+}
+
+.app-shell {
+  width: min(100%, 560px);
+  padding: 14px 14px calc(96px + env(safe-area-inset-bottom));
+}
+
+/* Compact brand bar rather than a large website masthead. */
+.topbar {
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 8px 3px 14px;
+  margin: 0;
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+}
+
+.topbar .eyebrow {
+  margin-bottom: 2px;
+  font-size: 0.64rem;
+  letter-spacing: 0.12em;
+  color: var(--muted);
+}
+
+h1,
+h2,
+h3 {
+  font-family: ui-rounded, "Arial Rounded MT Bold", "Avenir Next", system-ui, sans-serif;
+  letter-spacing: -0.025em;
+}
+
+h1 {
+  font-size: clamp(1.45rem, 6vw, 1.9rem);
+  line-height: 1.05;
+  color: var(--ink);
+}
+
+h2 {
+  font-size: 1.55rem;
+  color: var(--ink);
+}
+
+h3 {
+  color: var(--ink);
+}
+
+.index-button {
+  min-height: 42px;
+  padding: 8px 12px;
+  background: rgba(255, 250, 245, 0.86);
+  border: 1.5px solid var(--line-soft);
+  border-radius: 999px;
+  box-shadow: var(--surface-shadow-small);
+  color: var(--plum);
+  font-size: 0.82rem;
+}
+
+.screen {
+  gap: 12px;
+}
+
+/* "Main" becomes a normal page heading instead of a black banner. */
+.screen-title {
+  padding: 2px 4px 4px;
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  color: var(--ink);
+}
+
+.screen-title h2 {
+  color: var(--ink);
+  font-size: 1.72rem;
+}
+
+.screen-title p {
+  margin-top: 3px;
+  color: var(--muted);
+  font-size: 0.86rem;
+}
+
+.screen-title .icon-button {
+  background: var(--plum);
+  color: var(--paper);
+  border: 0;
+  box-shadow: var(--surface-shadow-small);
+}
+
+/* The room mode is supporting information, not another hero block. */
+.state-strip {
+  grid-template-columns: auto 1fr auto;
+  gap: 9px;
+  padding: 10px 11px;
+  border: 1.5px solid var(--line-soft);
+  border-radius: 18px;
+  box-shadow: none;
+}
+
+.state-icon {
+  width: 36px;
+  height: 36px;
+  border: 0;
+  background: rgba(255, 250, 245, 0.82);
+  font-size: 1.05rem;
+}
+
+.state-copy strong {
+  font-size: 0.92rem;
+}
+
+.state-copy span {
+  display: block;
+  margin-top: 1px;
+  font-size: 0.76rem;
+  line-height: 1.25;
+}
+
+.secondary-button.compact {
+  min-height: 36px;
+  padding: 7px 11px;
+  background: rgba(255, 250, 245, 0.82);
+  border: 1px solid var(--line-soft);
+  font-size: 0.78rem;
+}
+
+/* Main task is the only visual focal point. */
+.task-card {
+  padding: 21px 18px 18px;
+  overflow: hidden;
+  background: var(--paper);
+  border: 1.5px solid var(--line-soft);
+  border-radius: 26px;
+  box-shadow: var(--surface-shadow);
+}
+
+.task-card::before {
+  inset: 0 0 auto 0;
+  width: 100%;
+  height: 7px;
+}
+
+.task-heading {
+  margin: 2px 0 13px;
+}
+
+.task-heading h2 {
+  font-size: clamp(1.55rem, 6vw, 2rem);
+  line-height: 1.12;
+}
+
+.category-label {
+  margin-bottom: 10px;
+  padding: 5px 9px;
+  border: 0;
+  border-radius: 999px;
+  font-size: 0.68rem;
+  letter-spacing: 0.01em;
+  box-shadow: none;
+}
+
+.task-first-step {
+  margin: 12px 0 15px;
+  padding: 13px 14px;
+  background: color-mix(in srgb, var(--category-tint) 72%, white 28%);
+  border: 1px solid var(--line-soft);
+  border-radius: 16px;
+  font-weight: 650;
+  line-height: 1.4;
+}
+
+.button-row {
+  gap: 9px;
+}
+
+.primary-button,
+.secondary-button {
+  min-height: 48px;
+  border-radius: 15px;
+  box-shadow: none;
+}
+
+.primary-button {
+  border: 0;
+  background: var(--plum);
+  color: var(--paper);
+}
+
+.secondary-button {
+  border: 1.5px solid var(--line-soft);
+  background: rgba(255, 250, 245, 0.88);
+}
+
+.subtle-note {
+  margin-top: 10px;
+  text-align: center;
+  font-size: 0.76rem;
+}
+
+/* Quick routes resemble mobile action tiles rather than more task cards. */
+.quick-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 9px;
+}
+
+.quick-action {
+  grid-template-columns: 34px 1fr;
+  grid-template-areas:
+    "icon title"
+    "icon detail";
+  gap: 2px 9px;
+  min-height: 82px;
+  padding: 12px;
+  background: rgba(255, 250, 245, 0.76);
+  border: 1.5px solid var(--line-soft);
+  border-radius: 19px;
+  box-shadow: var(--surface-shadow-small);
+}
+
+.quick-action > span:last-child {
+  display: none;
+}
+
+.quick-action .quick-icon {
+  grid-area: icon;
+  width: 34px;
+  height: 34px;
+  align-self: start;
+  background: var(--duck-tint);
+  border: 0;
+  border-radius: 11px;
+}
+
+.quick-action strong {
+  grid-area: title;
+  font-size: 0.86rem;
+  line-height: 1.15;
+}
+
+.quick-action small {
+  grid-area: detail;
+  margin-top: 2px;
+  font-size: 0.71rem;
+  line-height: 1.25;
+}
+
+/* Task library cards stay compact and scan-friendly. */
+.list-card.task-card {
+  padding: 16px 15px 14px;
+  border-radius: 19px;
+  box-shadow: var(--surface-shadow-small);
+}
+
+.list-card.task-card::before {
+  height: 5px;
+}
+
+.list-card.task-card strong {
+  display: block;
+  font-size: 1rem;
+  line-height: 1.25;
+}
+
+.list-card.task-card p {
+  font-size: 0.79rem;
+  line-height: 1.35;
+}
+
+.panel,
+.list-card,
+.more-section,
+.index-group {
+  border: 1.5px solid var(--line-soft);
+  box-shadow: var(--surface-shadow-small);
+}
+
+.panel,
+.list-card {
+  border-radius: 20px;
+}
+
+.search-input,
+input[type="text"],
+input[type="search"],
+select,
+textarea {
+  border: 1.5px solid var(--line-soft);
+  background: rgba(255, 250, 245, 0.92);
+  border-radius: 15px;
+}
+
+.chip {
+  border: 1px solid var(--line-soft);
+  border-radius: 999px;
+  background: rgba(255, 250, 245, 0.8);
+}
+
+.chip.active {
+  background: var(--mauve-tint);
+  border-color: transparent;
+}
+
+/* Active task: one large instruction with fewer competing outlines. */
+.active-step {
+  min-height: 330px;
+  padding: 25px 21px;
+  border: 1.5px solid var(--line-soft);
+  border-top: 8px solid var(--category);
+  border-left: 1.5px solid var(--line-soft);
+  border-radius: 26px;
+  box-shadow: var(--surface-shadow);
+}
+
+.active-step .step-text {
+  font-size: clamp(1.35rem, 6vw, 1.8rem);
+}
+
+.session-controls button {
+  border: 1px solid var(--line-soft);
+  border-radius: 14px;
+  background: rgba(255, 250, 245, 0.76);
+}
+
+/* More and Index use grouped sheets with gentle colour, not thick boxes. */
+.more-section,
+.index-group {
+  overflow: hidden;
+  border-radius: 20px;
+  background: rgba(255, 250, 245, 0.82);
+}
+
+.more-section h3,
+.index-group-title {
+  padding: 11px 13px;
+  border-bottom: 1px solid var(--line-soft);
+}
+
+.row-button,
+.index-entry {
+  background: rgba(255, 250, 245, 0.84);
+  border-bottom: 1px solid rgba(84, 35, 61, 0.10);
+}
+
+.sheet-card,
+.index-panel {
+  background: #f5e8e2;
+  border: 0;
+  border-radius: 28px 28px 0 0;
+  padding: 18px 15px calc(18px + env(safe-area-inset-bottom));
+  box-shadow: 0 -20px 50px rgba(44, 32, 38, 0.28);
+}
+
+.sheet-dialog,
+.index-dialog {
+  width: min(100%, 560px);
+  max-height: 94vh;
+  margin: auto auto 0;
+}
+
+.sheet-dialog::backdrop,
+.index-dialog::backdrop {
+  background: rgba(44, 32, 38, 0.44);
+  backdrop-filter: blur(3px);
+}
+
+/* Floating mobile tab bar, closer to a native app. */
+.bottom-nav {
+  bottom: 10px;
+  width: min(calc(100% - 20px), 540px);
+  padding: 6px 7px calc(6px + env(safe-area-inset-bottom));
+  background: rgba(255, 250, 245, 0.94);
+  border: 1px solid rgba(84, 35, 61, 0.16);
+  border-radius: 22px;
+  box-shadow: 0 12px 34px rgba(44, 32, 38, 0.24);
+  backdrop-filter: blur(18px);
+}
+
+.nav-item {
+  min-height: 52px;
+  border: 0;
+  border-radius: 16px;
+  font-size: 0.68rem;
+  color: var(--muted);
+}
+
+.nav-item > span:first-child {
+  font-size: 1.08rem;
+}
+
+.nav-item.active {
+  background: var(--mauve-tint);
+  border: 0;
+  color: var(--plum);
+}
+
+.toast {
+  bottom: calc(88px + env(safe-area-inset-bottom));
+  width: min(calc(100% - 36px), 500px);
+  border-radius: 16px;
+}
+
+.empty-state {
+  border: 1.5px dashed var(--line-soft);
+  border-radius: 22px;
+  background: rgba(238, 230, 207, 0.82);
+}
+
+@media (max-width: 480px) {
+  .app-shell {
+    padding: 10px 11px calc(94px + env(safe-area-inset-bottom));
+  }
+
+  .topbar {
+    flex-direction: row;
+    align-items: center;
+    padding-inline: 2px;
+  }
+
+  .index-button {
+    width: auto;
+    justify-content: center;
+    padding-inline: 10px;
+  }
+
+  .index-button span:last-child {
+    font-size: 0.76rem;
+  }
+
+  .button-row {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .form-row,
+  .session-controls {
+    grid-template-columns: 1fr;
+  }
+
+  .quick-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 350px) {
+  .quick-grid,
+  .button-row {
+    grid-template-columns: 1fr;
+  }
+
+  .index-button span:last-child {
+    display: none;
+  }
+}
