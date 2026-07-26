@@ -12,6 +12,8 @@ export default function App() {
   const view = useAppStore((state) => state.view);
   const setView = useAppStore((state) => state.setView);
   const session = useAppStore((state) => state.session);
+  const tasks = useAppStore((state) => state.tasks);
+  const updateTask = useAppStore((state) => state.updateTask);
   const appearance = useAppStore((state) => state.appearance);
   const calmView = useAppStore((state) => state.calmView);
   const textScale = useAppStore((state) => state.textScale);
@@ -35,9 +37,41 @@ export default function App() {
     document.documentElement.dataset.motion = reducedMotion ? 'reduced' : 'standard';
   }, [appearance, calmView, textScale, reducedMotion]);
 
+  useEffect(() => {
+    const dish = tasks.find((task) => task.id === 'take-dishes');
+    const lockedSteps = [
+      'Get the dish transport carrier and begin filling it.',
+      'Take one safe load to the kitchen hand-off.',
+      'Are all bedroom dishes removed?',
+    ];
+    if (!dish) return;
+    const needsRepair = dish.loop !== 'dishes' || dish.minimumLabel !== 'Start with one load' || JSON.stringify(dish.steps) !== JSON.stringify(lockedSteps);
+    if (needsRepair) updateTask({
+      ...dish,
+      title: 'Take dishes to the kitchen',
+      category: 'food',
+      type: 'permanent',
+      mode: 'recovery',
+      minimumLabel: 'Start with one load',
+      fullLabel: 'Remove every dish',
+      minimum: 'Begin the carrier loop with one safe load. The task finishes when all bedroom dishes are removed.',
+      full: 'Repeat the carrier cycle until all bedroom dishes are removed.',
+      preserve: false,
+      loop: 'dishes',
+      steps: lockedSteps,
+    });
+  }, [tasks, updateTask]);
+
   const visibleView = session && view === 'active' ? 'active' : view;
   const openCapture = (type = 'oneoff') => { setCaptureType(type); setCaptureOpen(true); };
   const openWardrobeEditor = (item = null) => { setWardrobeItem(item); setWardrobeEditorOpen(true); };
+  const openTaskEditor = (task) => {
+    if (task.id === 'take-dishes') {
+      setPromptText(PROMPTS['prompt-rule'].replace('[RULE ID]', 'OT-001'));
+      return;
+    }
+    setEditingTask(task);
+  };
   const navigate = (destination) => { setView(destination); window.scrollTo({ top: 0, behavior: reducedMotion ? 'auto' : 'smooth' }); };
   const handleIndexAction = (action) => {
     if (action === 'capture-oneoff') return openCapture('oneoff');
@@ -57,7 +91,7 @@ export default function App() {
       <main className="content-area">
         {visibleView === 'today' && <TodayScreen onOpenIndex={() => setIndexOpen(true)} onOpenCapture={() => openCapture('oneoff')} onChooseCondition={() => setConditionOpen(true)} />}
         {visibleView === 'active' && <ActiveTaskScreen />}
-        {visibleView === 'tasks' && <TasksScreen onEdit={setEditingTask} onOpenCapture={() => openCapture('oneoff')} onManageCategories={() => setCategoriesOpen(true)} />}
+        {visibleView === 'tasks' && <TasksScreen onEdit={openTaskEditor} onOpenCapture={() => openCapture('oneoff')} onManageCategories={() => setCategoriesOpen(true)} />}
         {visibleView === 'advice' && <AdviceScreen onOpenAdvice={setAdviceItem} />}
         {visibleView === 'more' && <MoreScreen onOpenIndex={() => setIndexOpen(true)} onWardrobe={() => navigate('wardrobe')} onSettings={() => navigate('settings')} />}
         {visibleView === 'wardrobe' && <WardrobeScreen onAdd={() => openWardrobeEditor()} onEdit={openWardrobeEditor} />}
