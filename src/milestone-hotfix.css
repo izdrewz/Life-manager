@@ -1,5 +1,0 @@
-/* Milestone 1 safety: the task-editing sheet is not yet part of the tested flow.
-   Keep the control out of the interface until its state-reset behaviour is completed. */
-.small-secondary {
-  display: none !important;
-}
