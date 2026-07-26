@@ -1,69 +1,14 @@
 <!doctype html>
 <html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#f7c447">
-  <title>Life Manager</title>
-  <meta name="description" content="Cleaning and room care, one useful action at a time.">
-  <link rel="stylesheet" href="styles.css">
-  <link rel="stylesheet" href="ui-refresh.css">
-  <link rel="stylesheet" href="responsive-v2.css">
-  <link rel="stylesheet" href="viewport-fit.css">
-</head>
-<body>
-  <div class="app-shell" id="appShell">
-    <header class="topbar">
-      <div>
-        <p class="eyebrow">one thing at a time</p>
-        <h1>Life Manager</h1>
-      </div>
-      <button class="index-button" id="openIndex" type="button" aria-label="Open the Index or I'm lost directory">
-        <span aria-hidden="true">?</span>
-        <span>I’m lost</span>
-      </button>
-    </header>
-
-    <main id="viewRoot" tabindex="-1"></main>
-
-    <nav class="bottom-nav" aria-label="Primary navigation">
-      <button data-nav="main" class="nav-item active" type="button"><span aria-hidden="true">⌂</span><span>Today</span></button>
-      <button data-nav="tasks" class="nav-item" type="button"><span aria-hidden="true">☷</span><span>Tasks</span></button>
-      <button data-nav="advice" class="nav-item" type="button"><span aria-hidden="true">▤</span><span>Advice</span></button>
-      <button data-nav="more" class="nav-item" type="button"><span aria-hidden="true">•••</span><span>More</span></button>
-    </nav>
-  </div>
-
-  <dialog id="sheetDialog" class="sheet-dialog">
-    <form method="dialog" class="sheet-card" id="sheetContent"></form>
-  </dialog>
-
-  <dialog id="indexDialog" class="index-dialog">
-    <section class="index-panel">
-      <header class="dialog-header">
-        <div>
-          <p class="eyebrow">Find anything in the app</p>
-          <h2>Index / I’m lost</h2>
-        </div>
-        <button type="button" class="icon-button" id="closeIndex" aria-label="Close Index">×</button>
-      </header>
-      <label class="search-label" for="indexSearch">What do you need?</label>
-      <input id="indexSearch" class="search-input" type="search" placeholder="Add a one-off task, find advice, export backup…">
-      <div id="indexResults" class="index-results"></div>
-    </section>
-  </dialog>
-
-  <div id="toast" class="toast" role="status" aria-live="polite"></div>
-  <input id="importInput" type="file" accept="application/json" hidden>
-  <script src="app-part-1.js"></script>
-  <script src="app-part-2.js"></script>
-  <script src="app-part-3.js"></script>
-  <script src="app-part-4.js"></script>
-  <script src="app-part-5.js"></script>
-  <script src="app-part-6.js"></script>
-  <script src="app-part-7.js"></script>
-  <script src="app-part-8.js"></script>
-  <script src="app-loader.js"></script>
-  <script src="ui-behaviour.js"></script>
-</body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="theme-color" content="#4d2439" />
+    <meta name="description" content="Life Manager — cleaning support, one clear action at a time." />
+    <title>Life Manager</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
 </html>
