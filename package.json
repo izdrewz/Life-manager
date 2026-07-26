@@ -1,11 +1,12 @@
 {
   "name": "life-manager-react-rebuild",
   "private": true,
-  "version": "0.2.0",
+  "version": "0.3.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "check": "node scripts/verify-locked-rules.mjs",
+    "build": "npm run check && vite build",
     "preview": "vite preview"
   },
   "dependencies": {
