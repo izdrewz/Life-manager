@@ -1,9 +1,6 @@
 (() => {
   'use strict';
 
-  const LAYOUT_KEY = 'life-manager-layout-mode';
-  const DESKTOP_QUERY = window.matchMedia('(min-width: 860px)');
-
   function setText(element, value) {
     if (element && element.textContent !== value) element.textContent = value;
   }
@@ -12,75 +9,67 @@
     if (element && element.textContent.trim() === from) setText(element, to);
   }
 
-  function preferredLayout() {
-    if (!DESKTOP_QUERY.matches) return 'focus';
-    return localStorage.getItem(LAYOUT_KEY) || 'plan';
+  function setViewClass(view) {
+    document.body.classList.remove('view-start', 'view-active', 'view-tasks', 'view-advice', 'view-more');
+    document.body.classList.add(`view-${view}`);
   }
 
-  function applyLayout(mode = preferredLayout()) {
-    const resolved = DESKTOP_QUERY.matches ? mode : 'focus';
-    document.body.classList.toggle('layout-plan', resolved === 'plan');
-    document.body.classList.toggle('layout-focus', resolved === 'focus');
-    document.querySelectorAll('[data-layout-mode]').forEach(button => {
-      const selected = button.dataset.layoutMode === resolved;
-      button.classList.toggle('active', selected);
-      button.setAttribute('aria-pressed', String(selected));
-    });
-  }
-
-  function ensureLayoutSwitch() {
-    const topbar = document.querySelector('.topbar');
-    const indexButton = document.getElementById('openIndex');
-    if (!topbar || !indexButton || topbar.querySelector('.layout-switch')) return;
-
-    const switcher = document.createElement('div');
-    switcher.className = 'layout-switch';
-    switcher.setAttribute('aria-label', 'Page layout');
-    switcher.innerHTML = `
-      <button type="button" data-layout-mode="focus" aria-pressed="false">Focus</button>
-      <button type="button" data-layout-mode="plan" aria-pressed="false">Plan</button>`;
-    topbar.insertBefore(switcher, indexButton);
-
-    switcher.addEventListener('click', event => {
-      const button = event.target.closest('[data-layout-mode]');
-      if (!button || !DESKTOP_QUERY.matches) return;
-      localStorage.setItem(LAYOUT_KEY, button.dataset.layoutMode);
-      applyLayout(button.dataset.layoutMode);
-    });
+  function enhanceBrand() {
+    setText(document.querySelector('.topbar .eyebrow'), 'one thing at a time');
+    const indexLabel = document.querySelector('#openIndex span:last-child');
+    if (indexLabel) setText(indexLabel, 'I’m lost');
+    document.querySelector('.layout-switch')?.remove();
   }
 
   function makeQuickAction(action, icon, title, detail) {
     return `<button class="quick-action" type="button" data-action="${action}">
       <span class="quick-icon" aria-hidden="true">${icon}</span>
       <span><strong>${title}</strong><small>${detail}</small></span>
-      <span aria-hidden="true">›</span>
     </button>`;
+  }
+
+  function addGreeting(screen, title) {
+    const titleWrap = title.closest('.screen-title')?.querySelector('div');
+    if (!titleWrap || titleWrap.querySelector('.greeting-kicker')) return;
+    const kicker = document.createElement('p');
+    kicker.className = 'greeting-kicker';
+    kicker.textContent = 'hello, Izzy';
+    titleWrap.insertBefore(kicker, title);
   }
 
   function enhanceMain() {
     const mainTitle = document.getElementById('main-title');
     const mainScreen = mainTitle?.closest('.screen');
-    if (!mainScreen) return;
+    if (!mainScreen) return false;
 
+    setViewClass('start');
     mainScreen.classList.add('main-screen', 'start-screen');
-    setText(mainTitle, 'Start');
-    setText(mainScreen.querySelector('.screen-title p'), 'Pick one useful thing.');
+    addGreeting(mainScreen, mainTitle);
+    setText(mainTitle, 'Start here');
+    setText(mainScreen.querySelector('.screen-title p:not(.greeting-kicker)'), 'One small thing is enough.');
 
     const taskCard = mainScreen.querySelector('.task-card');
-    if (taskCard && !taskCard.dataset.focusEnhanced) {
-      taskCard.dataset.focusEnhanced = 'true';
-      taskCard.classList.add('focus-card');
-      const heading = taskCard.querySelector('.task-heading');
-      if (heading) {
-        const now = document.createElement('p');
-        now.className = 'now-label';
-        now.textContent = 'Next task';
-        heading.parentNode.insertBefore(now, heading);
-      }
-    }
-
     if (taskCard) {
-      replaceText(taskCard.querySelector('.task-first-step strong'), 'First action', 'Start with');
+      taskCard.classList.add('focus-card');
+      if (!taskCard.querySelector('.task-orb')) {
+        const orb = document.createElement('div');
+        orb.className = 'task-orb';
+        const icon = taskCard.querySelector('.category-label span')?.textContent || '✦';
+        orb.textContent = icon;
+        taskCard.insertBefore(orb, taskCard.firstChild);
+      }
+      if (!taskCard.querySelector('.now-label')) {
+        const heading = taskCard.querySelector('.task-heading');
+        if (heading) {
+          const now = document.createElement('p');
+          now.className = 'now-label';
+          now.textContent = 'One small start';
+          heading.parentNode.insertBefore(now, heading);
+        }
+      }
+
+      replaceText(taskCard.querySelector('.task-first-step strong'), 'First action', 'Next small thing');
+      replaceText(taskCard.querySelector('.task-first-step strong'), 'Start with', 'Next small thing');
 
       const title = taskCard.querySelector('h2')?.textContent.trim() || '';
       const primary = taskCard.querySelector('.primary-button');
@@ -90,11 +79,11 @@
       if (title === 'Take dishes to the kitchen') {
         setText(primary, 'Take one load');
         setText(secondary, 'Remove every dish');
-        setText(note, 'One load counts.');
+        setText(note, 'One load is enough to count.');
       } else {
-        setText(primary, 'Do the small version');
-        setText(secondary, 'Do the full task');
-        setText(note, 'The small version counts.');
+        setText(primary, 'Do one small version');
+        setText(secondary, 'Do the whole task');
+        setText(note, 'A small version counts.');
       }
     }
 
@@ -107,45 +96,46 @@
       const stateName = strong?.textContent.trim() || '';
 
       if (stateName.includes('Recovery') || stateName.includes('Room reset')) {
-        setText(strong, 'Room reset');
-        setText(detail, 'The ordered plan is ready when you need it.');
-        setText(button, 'Plan');
+        setText(strong, 'Room reset is ready');
+        setText(detail, 'Open the ordered plan when you need it.');
+        setText(button, 'See plan');
       } else if (stateName.includes('Maintenance') || stateName.includes('Keep it usable')) {
-        setText(strong, 'Keep it usable');
-        setText(detail, 'Choose what needs attention now. Nothing missed builds up.');
+        setText(strong, 'Keep the room usable');
+        setText(detail, 'Choose what needs attention now.');
         setText(button, 'Check');
       } else if (stateName.includes('Active') || stateName.includes('Task saved')) {
-        setText(strong, 'Task saved');
+        setText(strong, 'Your task is saved');
         setText(detail, 'Continue from the exact step you left.');
+        setText(button, 'Continue');
       }
     }
 
     const quickGrid = mainScreen.querySelector('.quick-grid');
-    if (quickGrid && !quickGrid.dataset.choiceEnhanced) {
-      quickGrid.dataset.choiceEnhanced = 'true';
+    if (quickGrid) {
       quickGrid.classList.add('choice-panel');
       const recoveryActive = Boolean(stateStrip?.classList.contains('recovery'));
       quickGrid.innerHTML = `
-        <div class="choice-heading"><p class="eyebrow">Other ways to start</p></div>
-        ${makeQuickAction('run-scan', '◎', 'What needs attention?', 'Dishes, rubbish, clothes, bed, route or floor')}
-        ${makeQuickAction(recoveryActive ? 'show-recovery' : 'run-scan', '↻', recoveryActive ? 'Room-reset plan' : 'Quick room check', recoveryActive ? 'Open the ordered reset tasks' : 'Find the current useful task')}
-        ${makeQuickAction('choose-task', '☷', 'Tasks & categories', 'Browse, add or edit')}`;
+        ${makeQuickAction('run-scan', '◎', 'What needs attention?', 'Pick what you can see')}
+        ${makeQuickAction(recoveryActive ? 'show-recovery' : 'run-scan', '⚡', recoveryActive ? 'Room reset' : 'Quick check', recoveryActive ? 'Open the ordered plan' : 'Find one useful task')}
+        ${makeQuickAction('choose-task', '☷', 'Tasks', 'Browse, add or edit')}`;
     }
+
+    return true;
   }
 
   function enhanceActiveTask() {
     const activeTitle = document.getElementById('active-title');
     const activeScreen = activeTitle?.closest('.screen');
-    if (!activeScreen) return;
+    if (!activeScreen) return false;
 
+    setViewClass('active');
     activeScreen.classList.add('active-screen');
-    setText(activeTitle, 'One step');
+    setText(activeTitle, 'One thing now');
 
     const subtitle = activeScreen.querySelector('.screen-title p');
     if (subtitle) setText(subtitle, subtitle.textContent.includes('Minimum') ? 'Small version' : 'Full task');
 
     setText(activeScreen.querySelector('.state-strip .state-copy strong'), 'Current task');
-
     const status = activeScreen.querySelector('.state-strip .status-pill');
     if (status && /^Step\s+/i.test(status.textContent)) {
       setText(status, status.textContent.replace(/^Step\s+/i, '').replace(/\s+of\s+/i, ' / '));
@@ -153,7 +143,7 @@
 
     setText(activeScreen.querySelector('.step-count'), 'Do this');
     setText(activeScreen.querySelector('[data-action="complete-step"]'), 'Done');
-    setText(activeScreen.querySelector('[data-action="loop-yes"]'), 'Yes — finish');
+    setText(activeScreen.querySelector('[data-action="loop-yes"]'), 'Yes — finished');
     setText(activeScreen.querySelector('[data-action="loop-no"]'), 'No — another load');
 
     activeScreen.querySelectorAll('.session-controls button').forEach(button => {
@@ -161,39 +151,52 @@
       if (button.dataset.action === 'stop-session') setText(button, 'Stop & save');
       if (button.dataset.action === 'task-advice') setText(button, 'Help');
     });
+    return true;
   }
 
   function enhanceTasks() {
-    const tasksTitle = document.getElementById('tasks-title');
-    if (!tasksTitle) return;
-    setText(tasksTitle, 'Tasks & categories');
-    const screen = tasksTitle.closest('.screen');
-    setText(screen?.querySelector('.screen-title p'), 'Find, add or change a task.');
-
+    const title = document.getElementById('tasks-title');
+    if (!title) return false;
+    setViewClass('tasks');
+    setText(title, 'Tasks');
+    const screen = title.closest('.screen');
+    setText(screen?.querySelector('.screen-title p'), 'Find, add or change something.');
     screen?.querySelectorAll('.chip').forEach(chip => {
       replaceText(chip, 'Recovery', 'Room reset');
       replaceText(chip, 'Maintenance', 'Keep usable');
     });
+    return true;
+  }
 
-    screen?.querySelectorAll('.list-card.task-card .task-first-step strong').forEach(label => {
-      replaceText(label, 'First action', 'Start with');
-    });
+  function enhanceAdvice() {
+    const title = document.getElementById('advice-title') || document.getElementById('advice-detail-title');
+    if (!title) return false;
+    setViewClass('advice');
+    return true;
+  }
+
+  function enhanceMore() {
+    const title = document.getElementById('more-title');
+    if (!title) return false;
+    setViewClass('more');
+    return true;
   }
 
   function enhanceNavigation() {
     document.querySelectorAll('[data-nav]').forEach(button => {
       const label = button.querySelector('span:last-child');
-      if (button.dataset.nav === 'main') setText(label, 'Start');
+      if (button.dataset.nav === 'main') setText(label, 'Today');
     });
   }
 
   function applyEnhancements() {
-    ensureLayoutSwitch();
-    applyLayout();
+    enhanceBrand();
     enhanceNavigation();
-    enhanceMain();
-    enhanceActiveTask();
-    enhanceTasks();
+    if (enhanceMain()) return;
+    if (enhanceActiveTask()) return;
+    if (enhanceTasks()) return;
+    if (enhanceAdvice()) return;
+    enhanceMore();
   }
 
   let scheduled = false;
@@ -207,6 +210,5 @@
   });
 
   observer.observe(document.getElementById('viewRoot'), { childList: true, subtree: true });
-  DESKTOP_QUERY.addEventListener('change', () => applyLayout());
   applyEnhancements();
 })();
