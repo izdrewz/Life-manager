@@ -1,85 +1,448 @@
-/* Hybrid responsive layout
-   Phone = one-action focus flow.
-   Laptop = compact planning workspace with an optional Focus mode.
-*/
+/* Warm, focused responsive design.
+   Mobile and laptop share one visual identity but use different layouts.
+   No translucent dashboard panels, no manual Focus/Plan switch. */
+
+:root {
+  --warm-bg: #fbf3e3;
+  --warm-bg-strong: #f6d58f;
+  --paper: #fffdf7;
+  --cream: #fff3d6;
+  --ink: #392a21;
+  --ink-soft: #756657;
+  --outline: #3d2f25;
+  --yellow: #f7c447;
+  --green: #72ad73;
+  --green-soft: #dcebd8;
+  --coral: #d56d50;
+  --terracotta: #c45f46;
+  --lavender: #a685c7;
+  --blue: #5799b8;
+  --shadow: 6px 8px 0 #3d2f25;
+  --shadow-small: 3px 4px 0 #3d2f25;
+  --radius-xl: 30px;
+  --radius-lg: 22px;
+  --radius-md: 16px;
+}
+
+html {
+  background: var(--warm-bg);
+}
+
+body,
+body.decorated {
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at 92% 8%, rgba(247, 196, 71, 0.34) 0 66px, transparent 67px),
+    radial-gradient(circle at 8% 10%, rgba(255, 255, 255, 0.82) 0 34px, transparent 35px),
+    linear-gradient(180deg, #f8dda0 0 210px, var(--warm-bg) 430px, var(--warm-bg) 100%);
+  color: var(--ink);
+  font-family: "Avenir Next", "Trebuchet MS", system-ui, sans-serif;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+h1,
+h2,
+h3,
+strong,
+button {
+  font-family: "Arial Rounded MT Bold", "Avenir Next Rounded", "Trebuchet MS", system-ui, sans-serif;
+}
+
+.app-shell {
+  width: min(100%, 680px);
+  margin: 0 auto;
+  padding: 14px 14px calc(104px + env(safe-area-inset-bottom));
+}
+
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 0;
+  padding: 6px 4px 18px;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.topbar .eyebrow {
+  margin: 0 0 2px;
+  color: #7a5a3d;
+  font-family: "Segoe Print", "Marker Felt", cursive;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: lowercase;
+}
+
+.topbar h1 {
+  color: var(--ink);
+  font-size: clamp(1.45rem, 6vw, 1.9rem);
+  line-height: 1;
+  letter-spacing: -0.035em;
+}
+
+.index-button {
+  min-height: 42px;
+  padding: 8px 12px;
+  border: 2px solid var(--outline);
+  border-radius: 999px;
+  background: var(--paper);
+  color: var(--ink);
+  box-shadow: var(--shadow-small);
+  font-size: 0.8rem;
+  font-weight: 800;
+}
 
 .layout-switch {
-  display: none;
-  padding: 3px;
-  border: 1px solid rgba(84, 35, 61, 0.14);
-  border-radius: 999px;
-  background: rgba(255, 250, 245, 0.74);
-  box-shadow: 0 4px 14px rgba(84, 35, 61, 0.06);
+  display: none !important;
 }
 
-.layout-switch button {
-  min-height: 36px;
-  padding: 6px 13px;
-  border: 0;
-  border-radius: 999px;
-  background: transparent;
-  color: var(--muted);
-  font-weight: 800;
-  cursor: pointer;
-}
-
-.layout-switch button.active {
-  background: var(--plum);
-  color: var(--paper);
-}
-
+.screen,
 .start-screen,
 .active-screen {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 16px;
 }
 
-/* Phone order: action first, alternatives second, room status last. */
+.screen-title {
+  position: relative;
+  padding: 14px 5px 4px;
+  border: 0;
+  background: transparent;
+  color: var(--ink);
+}
+
+.screen-title h2 {
+  color: var(--ink);
+  font-size: clamp(2rem, 9vw, 3.1rem);
+  line-height: 1;
+  letter-spacing: -0.045em;
+}
+
+.screen-title p {
+  margin-top: 8px;
+  color: #6f5b45;
+  font-family: "Segoe Print", "Marker Felt", cursive;
+  font-size: 0.98rem;
+  line-height: 1.35;
+}
+
+.greeting-kicker {
+  margin: 0 0 7px !important;
+  color: #745f44 !important;
+  font-size: 0.9rem !important;
+}
+
+/* Main focus card */
+.task-card,
+.focus-card {
+  --category: var(--blue);
+  --category-tint: #d9eef6;
+}
+
+.category-food { --category: #5799b8; --category-tint: #d9eef6; }
+.category-waste { --category: #b95454; --category-tint: #f1d9d2; }
+.category-clothes { --category: #a57b99; --category-tint: #ecdde7; }
+.category-function { --category: #e4a72d; --category-tint: #f8e9ba; }
+.category-tidying { --category: #8b70a7; --category-tint: #e7def0; }
+.category-deep { --category: #6d8d65; --category-tint: #dfe9db; }
+.category-organise { --category: #758ca7; --category-tint: #dce6ef; }
+.category-oneoff { --category: #ce7954; --category-tint: #f0ddce; }
+
+.focus-card {
+  position: relative;
+  overflow: visible;
+  padding: 30px 22px 24px;
+  border: 3px solid var(--outline);
+  border-radius: var(--radius-xl);
+  background: var(--paper);
+  box-shadow: var(--shadow);
+}
+
+.focus-card::before {
+  display: none;
+}
+
+.task-orb {
+  width: 66px;
+  height: 66px;
+  display: grid;
+  place-items: center;
+  margin-bottom: 22px;
+  border: 3px solid var(--outline);
+  border-radius: 50%;
+  background: var(--category);
+  color: var(--paper);
+  box-shadow: var(--shadow-small);
+  font-size: 1.55rem;
+}
+
+.now-label {
+  margin: 0 0 8px;
+  color: #a34e38;
+  font-family: "Segoe Print", "Marker Felt", cursive;
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.focus-card .category-label {
+  position: absolute;
+  top: 22px;
+  right: 20px;
+  margin: 0;
+  padding: 7px 10px;
+  border: 2px solid var(--outline);
+  border-radius: 999px;
+  background: var(--category-tint);
+  color: var(--ink);
+  box-shadow: none;
+  font-size: 0.7rem;
+}
+
+.focus-card .task-heading {
+  margin: 0 0 16px;
+}
+
+.focus-card .task-heading h2 {
+  max-width: 15ch;
+  color: var(--ink);
+  font-size: clamp(2rem, 8vw, 3rem);
+  line-height: 1.02;
+  letter-spacing: -0.045em;
+}
+
+.task-first-step {
+  margin: 18px 0 18px;
+  padding: 16px 17px;
+  border: 2px solid var(--outline);
+  border-radius: var(--radius-lg);
+  background: var(--cream);
+  color: var(--ink);
+  line-height: 1.4;
+  box-shadow: none;
+}
+
+.task-first-step strong {
+  display: block;
+  margin-bottom: 5px;
+  color: #a34e38;
+  font-family: "Segoe Print", "Marker Felt", cursive;
+  font-size: 0.75rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.focus-card .button-row {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+}
+
+.primary-button,
+.secondary-button,
+.tertiary-button,
+.session-controls button {
+  min-height: 52px;
+  border-radius: 18px;
+  font-weight: 900;
+}
+
+.primary-button {
+  border: 3px solid var(--outline);
+  background: var(--yellow);
+  color: var(--ink);
+  box-shadow: var(--shadow-small);
+}
+
+.secondary-button {
+  border: 2px solid var(--outline);
+  background: var(--paper);
+  color: var(--ink);
+  box-shadow: none;
+}
+
+.focus-card .primary-button {
+  min-height: 62px;
+  font-size: 1.15rem;
+}
+
+.focus-card .secondary-button {
+  min-height: 48px;
+}
+
+.subtle-note {
+  margin-top: 13px;
+  color: #756451;
+  text-align: center;
+  font-family: "Segoe Print", "Marker Felt", cursive;
+  font-size: 0.77rem;
+}
+
+/* Three quick starts */
+.choice-panel {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+}
+
+.choice-panel .choice-heading {
+  display: none;
+}
+
+.quick-action {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 8px;
+  min-height: 118px;
+  padding: 13px 8px;
+  border: 2px solid var(--outline);
+  border-radius: 20px;
+  background: var(--cream);
+  color: var(--ink);
+  box-shadow: var(--shadow-small);
+  text-align: center;
+}
+
+.quick-action .quick-icon {
+  width: 40px;
+  height: 40px;
+  display: grid;
+  place-items: center;
+  border: 0;
+  border-radius: 50%;
+  background: var(--green-soft);
+  color: var(--ink);
+  font-size: 1.2rem;
+}
+
+.quick-action strong {
+  display: block;
+  font-size: 0.77rem;
+  line-height: 1.15;
+}
+
+.quick-action small {
+  display: none;
+}
+
+/* Room mode becomes a quiet footer row, not a second hero. */
+.room-status-card,
+.state-strip {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 10px;
+  padding: 11px 12px;
+  border: 2px solid var(--outline);
+  border-radius: 18px;
+  background: var(--green-soft);
+  color: var(--ink);
+  box-shadow: none;
+  opacity: 1;
+}
+
+.state-icon {
+  width: 34px;
+  height: 34px;
+  display: grid;
+  place-items: center;
+  border: 0;
+  border-radius: 50%;
+  background: var(--paper);
+  color: var(--ink);
+}
+
+.state-copy strong {
+  display: block;
+  font-size: 0.84rem;
+}
+
+.state-copy span {
+  display: block;
+  margin-top: 2px;
+  color: #665948;
+  font-size: 0.71rem;
+  line-height: 1.25;
+}
+
+.room-status-card .compact,
+.state-strip .compact {
+  min-height: 38px;
+  padding: 7px 10px;
+  border: 2px solid var(--outline);
+  border-radius: 13px;
+  background: var(--paper);
+  box-shadow: none;
+  font-size: 0.72rem;
+}
+
 .start-screen > .screen-title { order: 1; }
 .start-screen > .focus-card { order: 2; }
 .start-screen > .choice-panel { order: 3; }
 .start-screen > .room-status-card { order: 4; }
 
-.now-label {
-  margin: 0 0 5px;
-  color: var(--muted);
-  font-size: 0.69rem;
-  font-weight: 900;
-  letter-spacing: 0.11em;
-  text-transform: uppercase;
-}
-
-.choice-panel {
+/* Bottom navigation */
+.bottom-nav {
+  position: fixed;
+  left: 50%;
+  bottom: 0;
+  transform: translateX(-50%);
+  z-index: 20;
+  width: min(100%, 680px);
   display: grid;
-  grid-template-columns: 1fr;
-  gap: 8px;
-  padding: 11px;
-  border: 1px solid rgba(84, 35, 61, 0.11);
-  border-radius: 22px;
-  background: rgba(255, 250, 245, 0.50);
+  grid-template-columns: repeat(4, 1fr);
+  gap: 4px;
+  padding: 8px 10px calc(8px + env(safe-area-inset-bottom));
+  border: 0;
+  border-top: 3px solid var(--outline);
+  border-radius: 0;
+  background: #fff8e9;
+  box-shadow: 0 -8px 22px rgba(61, 47, 37, 0.08);
 }
 
-.choice-heading {
-  padding: 1px 3px 3px;
+.nav-item {
+  min-height: 54px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  border: 0;
+  border-radius: 17px;
+  background: transparent;
+  color: #7b6c57;
+  font-size: 0.7rem;
+  font-weight: 800;
 }
 
-.choice-heading .eyebrow {
-  margin: 0;
-  font-size: 0.68rem;
+.nav-item > span:first-child {
+  font-size: 1.12rem;
 }
 
-.choice-panel .quick-action {
-  min-height: 66px;
-  background: rgba(255, 250, 245, 0.91);
+.nav-item.active {
+  background: var(--yellow);
+  color: var(--ink);
 }
 
-.focus-card .button-row {
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-}
-
-.room-status-card {
-  opacity: 0.88;
+/* Active task */
+.active-screen .screen-title {
+  order: 1;
 }
 
 .active-screen .state-strip {
@@ -94,218 +457,437 @@
   order: 4;
 }
 
-.active-screen .screen-title {
-  order: 1;
-}
-
-.active-screen .active-step {
-  min-height: min(58vh, 520px);
+.active-step {
+  min-height: min(56vh, 520px);
   display: flex;
   flex-direction: column;
   justify-content: center;
+  gap: 18px;
+  padding: 26px 22px;
+  border: 3px solid var(--outline);
+  border-radius: var(--radius-xl);
+  background: var(--paper);
+  color: var(--ink);
+  box-shadow: var(--shadow);
 }
 
-.active-screen .active-step .primary-button {
-  margin-top: 20px;
+.active-step .category-label {
+  width: fit-content;
+  padding: 7px 10px;
+  border: 2px solid var(--outline);
+  border-radius: 999px;
+  background: var(--category-tint);
+  color: var(--ink);
 }
 
-@media (max-width: 480px) {
-  .screen-title h2 {
-    font-size: 1.48rem;
+.active-step .step-count {
+  color: #a34e38;
+  font-family: "Segoe Print", "Marker Felt", cursive;
+  font-size: 0.78rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.active-step .step-text,
+.loop-question h3 {
+  color: var(--ink);
+  font-size: clamp(1.65rem, 7vw, 2.65rem);
+  line-height: 1.15;
+  letter-spacing: -0.035em;
+}
+
+.active-step .primary-button {
+  margin-top: 8px;
+  min-height: 62px;
+  font-size: 1.15rem;
+}
+
+.session-controls {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 9px;
+}
+
+.session-controls button {
+  border: 2px solid var(--outline);
+  background: var(--cream);
+  color: var(--ink);
+  box-shadow: none;
+}
+
+/* Lists, forms, advice and settings */
+.task-list,
+.advice-list,
+.more-grid,
+.index-results {
+  display: grid;
+  gap: 13px;
+}
+
+.list-card,
+.panel,
+.more-section,
+.index-group,
+.empty-state {
+  border: 2px solid var(--outline);
+  border-radius: var(--radius-lg);
+  background: var(--paper);
+  color: var(--ink);
+  box-shadow: var(--shadow-small);
+}
+
+.list-card.task-card {
+  position: relative;
+  overflow: hidden;
+  padding: 18px 17px 16px;
+  border: 2px solid var(--outline);
+  border-left: 10px solid var(--category);
+  border-radius: var(--radius-lg);
+  background: var(--paper);
+  box-shadow: var(--shadow-small);
+  text-align: left;
+}
+
+.list-card.task-card::before {
+  display: none;
+}
+
+.list-card.task-card .category-label {
+  display: inline-flex;
+  margin-bottom: 8px;
+  padding: 5px 8px;
+  border: 0;
+  background: var(--category-tint);
+  color: var(--ink);
+}
+
+.list-card.task-card strong {
+  display: block;
+  font-size: 1.05rem;
+}
+
+.list-card.task-card p,
+.advice-card p,
+.row-button small {
+  color: var(--ink-soft);
+}
+
+.filter-row {
+  display: flex;
+  gap: 7px;
+  overflow-x: auto;
+  padding-bottom: 2px;
+}
+
+.chip {
+  min-height: 40px;
+  padding: 7px 12px;
+  border: 2px solid var(--outline);
+  border-radius: 999px;
+  background: var(--paper);
+  color: var(--ink);
+  white-space: nowrap;
+}
+
+.chip.active {
+  background: var(--green);
+  color: var(--paper);
+}
+
+.search-input,
+input[type="text"],
+input[type="search"],
+select,
+textarea {
+  width: 100%;
+  min-height: 48px;
+  padding: 11px 13px;
+  border: 2px solid var(--outline);
+  border-radius: 16px;
+  background: var(--paper);
+  color: var(--ink);
+  box-shadow: none;
+}
+
+.screen-title .icon-button,
+.dialog-header .icon-button {
+  width: 44px;
+  height: 44px;
+  border: 2px solid var(--outline);
+  border-radius: 50%;
+  background: var(--yellow);
+  color: var(--ink);
+  box-shadow: var(--shadow-small);
+}
+
+.more-section {
+  overflow: hidden;
+}
+
+.more-section h3,
+.index-group-title {
+  padding: 13px 15px;
+  border-bottom: 2px solid var(--outline);
+  background: var(--cream);
+}
+
+.row-button,
+.index-entry {
+  min-height: 64px;
+  padding: 12px 14px;
+  border: 0;
+  border-bottom: 1px solid #d9cdbd;
+  background: var(--paper);
+  color: var(--ink);
+}
+
+.row-button:last-child,
+.index-entry:last-child {
+  border-bottom: 0;
+}
+
+/* Dialogs */
+.sheet-dialog,
+.index-dialog {
+  width: min(100%, 680px);
+  max-width: none;
+  margin: auto auto 0;
+  border: 0;
+  background: transparent;
+}
+
+.sheet-card,
+.index-panel {
+  max-height: 92vh;
+  overflow-y: auto;
+  padding: 20px 16px calc(22px + env(safe-area-inset-bottom));
+  border: 3px solid var(--outline);
+  border-bottom: 0;
+  border-radius: 28px 28px 0 0;
+  background: var(--warm-bg);
+  box-shadow: 0 -8px 0 var(--outline);
+}
+
+.sheet-dialog::backdrop,
+.index-dialog::backdrop {
+  background: rgba(57, 42, 33, 0.52);
+}
+
+.toast {
+  bottom: calc(86px + env(safe-area-inset-bottom));
+  width: min(calc(100% - 30px), 600px);
+  border: 2px solid var(--outline);
+  border-radius: 16px;
+  background: var(--ink);
+  color: var(--paper);
+}
+
+@media (max-width: 400px) {
+  .app-shell {
+    padding-inline: 10px;
   }
 
-  .topbar .eyebrow {
-    display: none;
+  .focus-card {
+    padding: 26px 17px 20px;
   }
 
-  .focus-card .button-row {
+  .task-orb {
+    width: 58px;
+    height: 58px;
+  }
+
+  .focus-card .category-label {
+    max-width: 42%;
+    white-space: normal;
+    text-align: center;
+  }
+
+  .quick-action {
+    min-height: 108px;
+    padding-inline: 5px;
+  }
+
+  .quick-action strong {
+    font-size: 0.69rem;
+  }
+
+  .session-controls {
     grid-template-columns: 1fr;
   }
-
-  .focus-card .primary-button,
-  .focus-card .secondary-button {
-    min-height: 52px;
-  }
-
-  .room-status-card .state-copy span {
-    max-width: 28ch;
-  }
 }
 
+/* Laptop: automatic planning workspace. */
 @media (min-width: 860px) {
-  .layout-switch {
-    display: inline-flex;
-    margin-left: auto;
-  }
-
-  body {
+  body,
+  body.decorated {
     background:
-      radial-gradient(circle at 8% 6%, rgba(205, 180, 192, 0.24), transparent 28rem),
-      linear-gradient(135deg, #f0ddd7 0%, #eee5dc 48%, #e7ded3 100%);
+      radial-gradient(circle at 92% 8%, rgba(247, 196, 71, 0.30) 0 90px, transparent 91px),
+      radial-gradient(circle at 7% 14%, rgba(255,255,255,0.88) 0 48px, transparent 49px),
+      linear-gradient(135deg, #f4d58f 0 250px, var(--warm-bg) 500px, #f7efdf 100%);
   }
 
-  /* Laptop Plan mode */
-  body.layout-plan .app-shell {
-    width: min(1240px, 100%);
+  .app-shell {
+    width: min(1380px, 100%);
     min-height: 100vh;
     display: grid;
-    grid-template-columns: 204px minmax(0, 1fr);
+    grid-template-columns: 190px minmax(0, 1fr);
     grid-template-rows: auto 1fr;
     grid-template-areas:
       "top top"
       "nav main";
-    gap: 18px 26px;
-    padding: 20px 30px 38px;
+    gap: 22px 30px;
+    padding: 24px 34px 42px;
   }
 
-  body.layout-plan .topbar {
+  .topbar {
     grid-area: top;
-    display: grid;
-    grid-template-columns: 1fr auto auto;
-    align-items: center;
-    padding: 1px 2px 8px;
+    padding: 0 2px 4px;
   }
 
-  body.layout-plan #viewRoot {
+  #viewRoot {
     grid-area: main;
     min-width: 0;
   }
 
-  body.layout-plan .bottom-nav {
+  .bottom-nav {
     grid-area: nav;
     position: sticky;
-    top: 20px;
+    top: 24px;
     left: auto;
     bottom: auto;
     transform: none;
-    z-index: 5;
     width: 100%;
     display: flex;
     flex-direction: column;
     align-self: start;
-    gap: 6px;
-    padding: 10px;
-    background: rgba(255, 250, 245, 0.91);
-    border: 1px solid rgba(84, 35, 61, 0.13);
-    border-radius: 22px;
-    box-shadow: 0 12px 30px rgba(44, 32, 38, 0.10);
-    backdrop-filter: blur(16px);
+    gap: 7px;
+    padding: 12px;
+    border: 3px solid var(--outline);
+    border-radius: 24px;
+    background: var(--paper);
+    box-shadow: var(--shadow);
   }
 
-  body.layout-plan .nav-item {
-    min-height: 52px;
+  .nav-item {
+    min-height: 58px;
     width: 100%;
     display: grid;
     grid-template-columns: 36px 1fr;
     justify-items: start;
     align-items: center;
-    gap: 9px;
+    gap: 10px;
     padding: 9px 11px;
-    text-align: left;
-    font-size: 0.84rem;
+    font-size: 0.86rem;
   }
 
-  body.layout-plan .nav-item > span:first-child {
+  .nav-item > span:first-child {
     width: 34px;
     height: 34px;
     display: grid;
     place-items: center;
-    border-radius: 11px;
-    background: rgba(255, 255, 255, 0.58);
+    border-radius: 50%;
+    background: var(--cream);
   }
 
-  body.layout-plan .start-screen {
+  .nav-item.active {
+    background: var(--yellow);
+  }
+
+  .start-screen {
     display: grid;
-    grid-template-columns: minmax(500px, 1.5fr) minmax(300px, 0.76fr);
+    grid-template-columns: minmax(560px, 760px) minmax(270px, 360px);
     grid-template-areas:
       "title title"
       "task choices"
       "task status";
     align-items: start;
-    gap: 15px 18px;
+    justify-content: start;
+    gap: 18px 24px;
   }
 
-  body.layout-plan .start-screen > .screen-title {
-    grid-area: title;
+  .start-screen > .screen-title { grid-area: title; }
+  .start-screen > .focus-card { grid-area: task; }
+  .start-screen > .choice-panel { grid-area: choices; }
+  .start-screen > .room-status-card { grid-area: status; }
+
+  .screen-title {
+    padding-top: 4px;
   }
 
-  body.layout-plan .start-screen > .focus-card {
-    grid-area: task;
-    min-height: 460px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
+  .screen-title h2 {
+    font-size: 3.4rem;
+  }
+
+  .focus-card {
+    min-height: 0;
     padding: 34px 32px 30px;
   }
 
-  body.layout-plan .start-screen > .choice-panel {
-    grid-area: choices;
+  .focus-card .task-heading h2 {
+    font-size: clamp(2.5rem, 4vw, 3.6rem);
   }
 
-  body.layout-plan .start-screen > .room-status-card {
-    grid-area: status;
+  .task-orb {
+    width: 72px;
+    height: 72px;
   }
 
-  body.layout-plan .choice-panel .quick-action {
-    min-height: 72px;
+  .choice-panel {
+    grid-template-columns: 1fr;
   }
 
-  body.layout-plan .active-screen {
-    width: min(100%, 900px);
-    margin-inline: auto;
+  .quick-action {
+    min-height: 90px;
+    flex-direction: row;
+    justify-content: flex-start;
+    padding: 14px;
+    text-align: left;
   }
 
-  body.layout-plan .active-screen .active-step {
-    min-height: 500px;
+  .quick-action strong {
+    font-size: 0.88rem;
   }
 
-  body.layout-plan #viewRoot > .screen:not(.start-screen):not(.active-screen) {
-    width: min(100%, 960px);
-    margin-inline: auto;
+  .quick-action small {
+    display: block;
+    margin-top: 3px;
+    font-size: 0.72rem;
+    line-height: 1.25;
   }
 
-  body.layout-plan .task-list,
-  body.layout-plan .advice-list {
+  .room-status-card {
+    align-self: start;
+  }
+
+  #viewRoot > .screen:not(.start-screen):not(.active-screen) {
+    width: min(100%, 1020px);
+  }
+
+  .task-list,
+  .advice-list {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
-  body.layout-plan .sheet-dialog,
-  body.layout-plan .index-dialog {
-    margin: auto;
-    width: min(calc(100% - 48px), 780px);
-  }
-
-  body.layout-plan .sheet-card,
-  body.layout-plan .index-panel {
-    border-radius: 28px;
-    max-height: 84vh;
-  }
-
-  /* Laptop Focus mode */
-  body.layout-focus .app-shell {
-    width: min(720px, 100%);
-    display: block;
-    padding: 18px 24px calc(104px + env(safe-area-inset-bottom));
-  }
-
-  body.layout-focus .topbar {
-    display: grid;
-    grid-template-columns: 1fr auto auto;
-    align-items: center;
-  }
-
-  body.layout-focus .start-screen > .focus-card {
-    min-height: 420px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    padding: 30px 28px;
-  }
-
-  body.layout-focus .start-screen > .choice-panel,
-  body.layout-focus .start-screen > .room-status-card {
-    max-width: 620px;
-    width: 100%;
+  .active-screen {
+    width: min(100%, 860px);
     margin-inline: auto;
+  }
+
+  .active-step {
+    min-height: 500px;
+    padding: 36px 34px;
+  }
+
+  .sheet-dialog,
+  .index-dialog {
+    width: min(calc(100% - 60px), 780px);
+    margin: auto;
+  }
+
+  .sheet-card,
+  .index-panel {
+    border: 3px solid var(--outline);
+    border-radius: 30px;
+    box-shadow: var(--shadow);
   }
 }
