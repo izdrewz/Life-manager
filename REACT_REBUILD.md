@@ -15,12 +15,12 @@ This branch is deliberately separate from the live `main` branch.
 - valid smaller and full task versions
 - quick capture for one-off or permanent tasks
 - task search and filtering
-- basic task editing
 - Advice, History, backup export/import and Index / I’m lost routes
 - local browser autosave
 
 ## Deliberately not included yet
 
+- tested task-editing sheet
 - production Calendar or Esslay synchronisation
 - cloud accounts and cross-device sync
 - voice capture
