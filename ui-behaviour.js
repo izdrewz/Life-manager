@@ -68,8 +68,8 @@
         }
       }
 
-      replaceText(taskCard.querySelector('.task-first-step strong'), 'First action', 'Next small thing');
-      replaceText(taskCard.querySelector('.task-first-step strong'), 'Start with', 'Next small thing');
+      replaceText(taskCard.querySelector('.task-first-step strong'), 'First action', 'Start this task');
+      replaceText(taskCard.querySelector('.task-first-step strong'), 'Start with', 'Start this task');
 
       const title = taskCard.querySelector('h2')?.textContent.trim() || '';
       const primary = taskCard.querySelector('.primary-button');
